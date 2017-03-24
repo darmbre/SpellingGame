@@ -40,7 +40,7 @@ public class SpellingGame extends JPanel {
 		// Gets initial size of the screen
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		screenWidth = screen.width;
-		screenHeight = screen.height;
+		screenHeight = screen.height-100;
 	}
 
 	@Override
@@ -50,6 +50,8 @@ public class SpellingGame extends JPanel {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		getInput();
+		
+		// Game Initialization Mode
 		if (this.state==0) //initialize the game
 		{
 			// Establish and draw the initial board
@@ -57,16 +59,48 @@ public class SpellingGame extends JPanel {
 			state=1;
 			gkc.setState(1);
 		}
-		if (this.state>0)
+		
+		//Demo Mode
+		if (this.state==1)
 		{
 			adjustBoard(gameBoard, g2d);
 		}
+		
+		// Start actual Game (add sound, wait for a spin)
+		if (this.state==2)
+		{
+			//Stop the board and wait for a spin
+			this.state=4;
+			gkc.setState(4);
+		}
+		
+		// Spinning Board
 		if (this.state==3)
 		{
 			//display word
 			//gameBoard.showSpellingWord(g2d,timeForDifferentWord);
 		}
+		
+		// Stop board
+		if (this.state==4)
+		{
+			adjustBoard(gameBoard, g2d);
+		}
+		
+		// Display a new word
+		if (this.state==5)
+		{
+			
+		}
+		
+		// End the game
+		if (this.state==6)
+		{
+			state=0;
+		}
 		gameBoard.showInfo(g2d);
+		
+		
 
 	}
 
@@ -80,12 +114,8 @@ public class SpellingGame extends JPanel {
 
 	private void adjustBoard(Board board, Graphics2D screen) {
 		board.drawBoard(screen);
-		if (state==2)
-		{
-			board.shuffle();
-			timeForDifferentWord=true;
-		}
-		board.setSelectedSquare(screen, state==2);
+		board.shuffle();
+		board.setSelectedSquare(screen, state>0);
 		
 	}
 
