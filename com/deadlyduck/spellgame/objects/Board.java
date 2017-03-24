@@ -22,9 +22,19 @@ public class Board {
 	
 	private Viewer viewer=null;
 	private Slide currentSlide=null;
+	private int slidePtr=0;
 	
+	private int totalSlides=36;
+	private int totalTiles=18;
+	
+	//Weights of Slides (needs to add up to 36)
+	int numOfSlideType1=6;
+	int numOfSlideType2=6;
+	int numOfSlideType3=6;
+	int numOfSlideType4=6;
+	int numOfSlideType5=6;
+	int numOfSlideType6=6;
 
-	
 	
 	public Board(int width, int height, Graphics2D screen)
 	{
@@ -32,23 +42,63 @@ public class Board {
 		boardHeight=height-statusBarHeight;
 		createBoardLayout(screen);
 		
-	}	
+	}
+	
+	private void createSlides()
+	{
+		for (int i=0;i<numOfSlideType1;i++)
+		{
+			Slide s=new Slide(Color.BLUE);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType2;i++)
+		{
+			Slide s=new Slide(Color.RED);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType3;i++)
+		{
+			Slide s=new Slide(Color.CYAN);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType4;i++)
+		{
+			Slide s=new Slide(Color.GREEN);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType5;i++)
+		{
+			Slide s=new Slide(Color.PINK);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType6;i++)
+		{
+			Slide s=new Slide(Color.ORANGE);
+			slides.add(s);
+		}
+	}
 	
 	private void createBoardLayout(Graphics2D screen) {
 		
 		int x = 1;
 		int y = 1;
 		
-		//It just feels like we'll have at least 16 tiles even given the dynamic logic
-		tiles=new ArrayList<Tile>(16);
-		slides=new ArrayList<Slide>(16);
+		tiles=new ArrayList<Tile>(totalTiles);
+		slides=new ArrayList<Slide>(totalSlides);
 		
-		Tile tile=new Tile(this, x, y, new Slide());
-		int tileWidth=tile.getTileWidth();
-		int tileHeight=tile.getTileHeight();
+		// This is a dummy tile to get measurements
+		Tile dummyTile=new Tile(this, x, y, null);
+		int tileWidth=dummyTile.getTileWidth();
+		int tileHeight=dummyTile.getTileHeight();
+		dummyTile=null;
+		
+		createSlides();
 		viewer=new Viewer(tileHeight+15, tileWidth+15, tileHeight*(Tile.numOfTilesHigh-2)-20,tileWidth*(Tile.numOfTilesWide-2)-20);
-		
-		tile=null;
 
 		// Draw the top horizontal
 		while (x < boardWidth - tileWidth) {
@@ -83,18 +133,13 @@ public class Board {
 			addTileToGame(screen, x, y);
 			y-=tileHeight;
 		}
-		
-		// Create the viewer
-		
-		
 	}
 
 	private void addTileToGame(Graphics2D screen, int x, int y) {
 		Tile tile;
-		tile = new Tile(this,x,y, new Slide());
+		tile = new Tile(this,x,y, slides.get(slidePtr++));
 		tile.drawGameTile(screen, false);
 		tiles.add(tile);
-		slides.add(tile.getSlide());
 	}
 	
 	public void drawBoard(Graphics2D screen)
@@ -134,6 +179,7 @@ public class Board {
 	
 	public void shuffle()
 	{
+		Collections.shuffle(slides);
 		Collections.shuffle(slides);
 		for(int i=0;i<tiles.size();i++)
 		{

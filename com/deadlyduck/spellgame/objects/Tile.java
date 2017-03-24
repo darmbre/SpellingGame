@@ -65,7 +65,7 @@ public class Tile
 		}
 		else
 		{
-			screen.setColor(Color.GRAY);
+			screen.setColor(Color.BLACK);
 		}
 		screen.drawRoundRect(this.x+tileInnerBoarder, this.y+tileInnerBoarder, tileWidth-(tileInnerBoarder*2), tileHeight-(tileInnerBoarder*2), tileWidthCornerDiameter, tileHeightCornerDiameter);
 		screen.setStroke(prevStroke);
