@@ -9,6 +9,7 @@ public class GameKeyController implements KeyEventDispatcher {
     private static int state=0;
     /*
      * 0 = init
+     * 
      * 1 = stopped
      * 2 = spinning
      * 3 = displaying word
@@ -22,26 +23,41 @@ public class GameKeyController implements KeyEventDispatcher {
         int kc = e.getKeyCode();
 
         if (e.getID() == KeyEvent.KEY_PRESSED) {
-        	if (kc==KeyEvent.VK_S)
-        	{
-        		// Stop the board 
-        		state=1;
-        	}
         	
-        	if (kc==KeyEvent.VK_G)
+        	// Press '<SPACE BAR>' to Spin/Stop the Board
+        	if (kc==KeyEvent.VK_F1)
         	{
-        		// Spinning
+        		// Start a new game and get the board spinning
+        		if (state<2)
         		state=2;
+        		
         	}
         	
+        	if (kc==KeyEvent.VK_SPACE)
+        	{
+        		// In the process of a game (not demo mode)
+        		if (state>2)
+        		{
+        			//If Spinning - stop the board
+        			if (state==3)
+        			{
+        				state=4;
+        				
+        			}
+        			//If Stopped - spin the board
+        			else if (state==4)
+        			{
+        				state=3;
+        			}        			
+        		}
+
+        		
+        	}
         	
+        	// Press 'W' to display a new word
         	if (kc==KeyEvent.VK_W)
         	{
-        		// Display Word
-        		if (state==1)
-        		{
-        			state=3;
-        		}
+
         		
         	}
 
