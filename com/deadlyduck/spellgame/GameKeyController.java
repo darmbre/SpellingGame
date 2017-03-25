@@ -45,7 +45,7 @@ public class GameKeyController implements KeyEventDispatcher {
         				
         			}
         			//If Stopped - spin the board
-        			else if (state==4)
+        			else if (state==4 || state==6)
         			{
         				state=3;
         			}        			
@@ -57,7 +57,10 @@ public class GameKeyController implements KeyEventDispatcher {
         	// Press 'W' to display a new word
         	if (kc==KeyEvent.VK_W)
         	{
-
+        		if (this.state==4)
+        		{
+        			state=5;
+        		}
         		
         	}
 
@@ -81,4 +84,3 @@ public class GameKeyController implements KeyEventDispatcher {
 
 
 }
-

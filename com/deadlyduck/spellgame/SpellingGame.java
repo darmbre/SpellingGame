@@ -32,7 +32,7 @@ public class SpellingGame extends JPanel {
     private BufferedReader keyboard=new BufferedReader(fileInputStream);	
     
 	public GameKeyController gkc=null;
-    public static boolean timeForDifferentWord=false;
+    //public static boolean timeForDifferentWord=false;
 
 
 	public SpellingGame()
@@ -64,7 +64,7 @@ public class SpellingGame extends JPanel {
 		if (this.state==1)
 		{
 			adjustBoard(gameBoard, g2d);
-		}
+		} else
 		
 		// Start actual Game (add sound, wait for a spin)
 		if (this.state==2)
@@ -72,29 +72,43 @@ public class SpellingGame extends JPanel {
 			//Stop the board and wait for a spin
 			this.state=4;
 			gkc.setState(4);
-		}
+		} else
 		
 		// Spinning Board
 		if (this.state==3)
 		{
-			//display word
-			//gameBoard.showSpellingWord(g2d,timeForDifferentWord);
-		}
+			gameBoard.drawBoard(g2d);
+			gameBoard.shuffle();
+			gameBoard.setSelectedSquare(g2d, state>0);
+		} else
 		
 		// Stop board
 		if (this.state==4)
 		{
-			adjustBoard(gameBoard, g2d);
-		}
+			gameBoard.drawBoard(g2d);
+			gameBoard.setSelectedSquare(g2d, false);
+			
+		} else
 		
 		// Display a new word
 		if (this.state==5)
 		{
+			gameBoard.showSpellingWord(g2d, true);
+			this.state=6;
+			gkc.setState(6);
+			gameBoard.drawBoard(g2d);
+			gameBoard.setSelectedSquare(g2d, false);
+		} else
 			
-		}
+		if (this.state==6)
+		{
+			gameBoard.showSpellingWord(g2d, false);
+			gameBoard.drawBoard(g2d);
+			gameBoard.setSelectedSquare(g2d, false);
+		} else
 		
 		// End the game
-		if (this.state==6)
+		if (this.state==7)
 		{
 			state=0;
 		}
