@@ -1,0 +1,162 @@
+package com.deadlyduck.spellgame.objects;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Random;
+
+public class Board {
+	
+	private static int boardWidth=0;
+	private static int boardHeight=0;
+	
+	private ArrayList<Tile> tiles=null;
+	private int tileNum=0;
+	private Random randomFactory=new Random(new Date().getTime());
+	
+	public Board(int width, int height, Graphics2D screen)
+	{
+		boardWidth=width;
+		boardHeight=height;
+		createBoardLayout(screen);
+		
+	}	
+	
+	private void createBoardLayout(Graphics2D screen) {
+		
+		int x = 1;
+		int y = 1;
+		
+		//It just feels like we'll have at least 16 tiles even given the dynamic logic
+		tiles=new ArrayList<Tile>(16);
+		
+		Tile tile=new Tile(this, x, y, getRandomColor());
+		int tileWidth=tile.getTileWidth();
+		int tileHeight=tile.getTileHeight();
+		tile=null;
+
+		// Draw the top horizontal
+		while (x < boardWidth - tileWidth) {
+			
+			addTileToGame(screen, x, y);
+			x += tileWidth;
+			
+		}
+		
+		// Draw the right side
+		x-=tileWidth;
+		y=tileHeight;
+		
+		while (y < boardHeight) {
+			addTileToGame(screen, x, y);
+			y += tileHeight;
+		}
+
+		// Draw the bottom
+		y-=tileHeight;
+		x-=tileWidth;
+		while (x >= 0)
+		{
+			addTileToGame(screen, x, y);
+			x-=tileWidth;
+		}
+		
+		// Draw the left side
+		x+=tileWidth;
+		y-=tileHeight;
+		while (y >= tileHeight)
+		{
+			addTileToGame(screen, x, y);
+			y-=tileHeight;
+		}
+		
+	}
+
+	private void addTileToGame(Graphics2D screen, int x, int y) {
+		Tile tile;
+		tile = new Tile(this,x,y, getRandomColor());
+		tile.drawGameTile(screen);
+		tiles.add(tile);
+	}
+	
+	public void drawBoard(Graphics2D screen)
+	{
+		Iterator<Tile> i = tiles.iterator();
+		
+		// Draw the top horizontal
+		while(i.hasNext())
+		{
+			i.next().drawGameTile(screen);
+		}
+	}
+
+	public void showInfo(Graphics2D screen)
+	{
+		screen.drawString("Width:" + boardWidth, 30, boardHeight - 130);
+		screen.drawString("Height:" + boardHeight, 30, boardHeight - 145);
+	}
+	
+	public static int getBoardWidth() {
+		return boardWidth;
+	}
+
+	public static void setBoardWidth(int boardWidth) {
+		Board.boardWidth = boardWidth;
+	}
+
+	public static int getBoardHeight() {
+		return boardHeight;
+	}
+
+	public static void setBoardHeight(int boardHeight) {
+		Board.boardHeight = boardHeight;
+	}
+	
+	public Color getRandomColor()
+	{
+		Color retVal=Color.BLACK;
+		int randomInt=randomFactory.nextInt(6);
+		switch(randomInt)
+		{
+		case 0:
+			retVal=Color.BLUE;
+			break;
+
+		case 1:
+			retVal=Color.RED;
+			break;
+					
+		case 2:
+			retVal=Color.YELLOW;
+			break;
+		
+		case 3:
+			retVal=Color.GREEN;
+			break;
+		
+		case 4:
+			retVal=Color.PINK;
+			break;
+		
+		case 5:
+			retVal=Color.ORANGE;
+			break;
+					
+		default:
+			retVal=Color.BLACK;
+			break;
+		}
+		return retVal;
+	}
+	
+	public void shuffle()
+	{
+		Collections.shuffle(tiles);
+		System.out.println(tiles);
+	}
+
+
+}

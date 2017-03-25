@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
+import com.deadlyduck.spellgame.GameKeyController;
+
 public class Board {
 	
 	private static int boardWidth=0;
@@ -98,7 +100,7 @@ public class Board {
 		dummyTile=null;
 		
 		createSlides();
-		viewer=new Viewer(tileHeight+15, tileWidth+15, tileHeight*(Tile.numOfTilesHigh-2)-20,tileWidth*(Tile.numOfTilesWide-2)-20);
+		viewer=new Viewer(tileHeight+15, tileWidth+15, tileHeight*(Tile.numOfTilesHigh-2)-20,tileWidth*(Tile.numOfTilesWide-3)-20);//was 2
 
 		// Draw the top horizontal
 		while (x < boardWidth - tileWidth) {
@@ -157,6 +159,7 @@ public class Board {
 	{
 		screen.drawString("Width:" + boardWidth, 30, boardHeight - 130);
 		screen.drawString("Height:" + boardHeight, 30, boardHeight - 145);
+		screen.drawString("State:"+ GameKeyController.getState(), 30, boardHeight - 115);
 	}
 	
 	public static int getBoardWidth() {
@@ -200,8 +203,7 @@ public class Board {
 	
 	public void showSpellingWord(Graphics2D screen, boolean timeForDifferentWord)
 	{
-		viewer.drawCenteredString(screen, currentSlide, timeForDifferentWord);
+		viewer.drawCenteredString(screen, tiles.get(0).getTileWidth(), currentSlide, timeForDifferentWord);
 	}
-
 
 }

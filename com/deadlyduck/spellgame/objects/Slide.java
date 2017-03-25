@@ -76,4 +76,12 @@ public class Slide {
 		this.text = text;
 	}
 	
+	public int getSlideType() {
+		return slideType;
+	}
+
+	public void setSlideType(int slideType) {
+		this.slideType = slideType;
+	}
+	
 }
