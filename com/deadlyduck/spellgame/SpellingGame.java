@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import com.deadlyduck.spellgame.objects.Board;
+import com.deadlyduck.spellgame.objects.Player;
 import com.deadlyduck.spellgame.objects.Viewer;
 
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -33,11 +34,13 @@ public class SpellingGame extends JPanel {
 	private Board gameBoard=null;
 	private int state=0; //0 - init, 1 - Main Loop, 2 - Shutdown, 3 - restart?
 	private Font font=null;
+	private boolean isNewTurn=true;
 	
 	private InputStreamReader fileInputStream=new InputStreamReader(System.in);
     private BufferedReader keyboard=new BufferedReader(fileInputStream);	
     
 	public GameKeyController gkc=null;
+	private Player player=null;
     //public static boolean timeForDifferentWord=false;
 
 
@@ -47,6 +50,7 @@ public class SpellingGame extends JPanel {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		screenWidth = screen.width;
 		screenHeight = screen.height-100;
+		player=new Player();
 		this.setLayout(null);
 	}
 
@@ -88,6 +92,8 @@ public class SpellingGame extends JPanel {
 		// Spinning Board
 		if (this.state==3)
 		{
+			isNewTurn=true;
+			player.startSpinClip();
 			gameBoard.drawBoard(g2d);
 			gameBoard.shuffle();
 			gameBoard.setSelectedSquare(g2d, state>0);
@@ -96,6 +102,22 @@ public class SpellingGame extends JPanel {
 		// Stop board
 		if (this.state==4)
 		{
+			player.stopSpinClip();
+			
+			if (isNewTurn)
+			{
+				if (gameBoard.isWhammy())
+				{
+					player.playWhammyClip();
+				}
+				else
+				{
+					player.playSelectClip();
+				}
+				
+				isNewTurn=false;
+			}			
+			
 			gameBoard.drawBoard(g2d);
 			gameBoard.setSelectedSquare(g2d, false);
 //			gameBoard.getViewer().getVideoPlayer().playMedia("C:\\dev\\test.mpg");

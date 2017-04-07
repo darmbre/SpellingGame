@@ -210,6 +210,17 @@ public class Board {
 		viewer.drawCenteredString(screen, tiles.get(0).getTileWidth(), currentSlide, timeForDifferentWord);
 	}
 	
+	public boolean isWhammy()
+	{
+		boolean whammy=false;
+		if (this.currentSlide.getSlideType()==2)
+		{
+			whammy = true;
+		}
+		return whammy;
+		
+	}
+	
 	public Viewer getViewer()
 	{
 		return this.viewer;
