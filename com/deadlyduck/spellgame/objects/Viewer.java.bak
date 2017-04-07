@@ -1,68 +1,48 @@
 package com.deadlyduck.spellgame.objects;
 
-import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Properties;
 
-import com.deadlyduck.spellgame.SpellingGame;
-import com.sun.jna.NativeLibrary;
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
 
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
 
 public class Viewer 
 {
-	private int viewerX=0;
-	private int viewerY=0;
-	private int viewerWidth=0;
-	private int viewerHeight=0;
+	private static boolean isVideoInitialized=false;
+	
+	private int borderHeight=0;
+	private int borderWidth=0;
+	private int width=0;
+	private int height=0;
 	private Rectangle rect=null;
-	private EmbeddedMediaPlayer mediaPlayer=null;
-	private Canvas canvas=null;
+	private JFrame gameFrame=null;
 	
     public ArrayList<String> normalWordList=new ArrayList<String>();
     
     int normalWordListIndex=-1;
     
     private static String vowels="aeiouyAEIOUY";
-
+    
+    
 	
-	public Viewer(int viewerY, int viewerX, int viewerWidth, int viewerHeight)
+	public Viewer(int widthOfBorder, int heightOfBorder, int width, int heigme)
 	{
-		//Get the word list
-		File file= new File("C:\\dev\\words.properties");
-		Properties properties=null;
-		try {
-			FileInputStream fileInput = new FileInputStream(file);
-			properties = new Properties();
-			properties.load(fileInput);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Enumeration<Object> enuKeys = properties.keys();
-		while (enuKeys.hasMoreElements())
-		{
-			normalWordList.add((String)enuKeys.nextElement());
-		}
-
-		this.viewerX=viewerX;
-		this.viewerY=viewerY;
-		this.viewerWidth=viewerWidth;
-		this.viewerHeight=viewerHeight;
-		this.rect=new Rectangle(viewerWidth,viewerHeight);
-		createVideoPlayer();
-		//loadWordLists();
+		borderHeight=heightOfBorder;
+		borderWidth=widthOfBorder;
+		this.width=width;
+		this.height=height;
+		loadWordLists();
 	}
 	
 	public void drawCenteredString(Graphics g, int width, Slide currentSlide, boolean timeForDifferentWord) {
@@ -71,12 +51,11 @@ public class Viewer
 		Font font=new Font("Arial Black", Font.BOLD, 60);
 		Font prevFont=g.getFont();
 		g.setFont(font);		
-		
-	    FontMetrics metrics = g.getFontMetrics(font);
+		FontMetrics metrics = g.getFontMetrics(font);
 	    int x = (rect.width - metrics.stringWidth(text)) / 2;
 	    
 	    //Account for corner slides width??
-	    x+=viewerY+width;
+	    x+=borderWidth+width;
 	    
 	    // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
 	    int y = ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
@@ -84,7 +63,8 @@ public class Viewer
 	    
 	    Color prevColor=g.getColor();
 	    g.setColor(Color.WHITE);
-	    	    
+	    //g.drawRect(borderHeight, borderWidth, rect.height, rect.width);
+	    
 	    // Draw the String
 	    g.drawString(text, x, y);
 	    g.setColor(prevColor);
@@ -100,9 +80,10 @@ public class Viewer
 		theWord=normalWordList.get(normalWordListIndex);
 		if (slide.getSlideType()==5)
 		{
-			//theWord=theWord.replaceAll("[aeiouyAEIOUY](?!\\b)", "");
-			String disemvoweledWord=theWord.replaceAll("[aeiouyAEIOUY]", "");
-			theWord=theWord+"("+disemvoweledWord+")";
+			char[] buffer=new char[theWord.length()];
+			StringBuilder sb=new StringBuilder(theWord);
+			//ArrayList list=createVowelWords(sb);
+			//sb.indexOf(str);
 		}
 		else if (slide.getSlideType()==6)
 		{
@@ -132,13 +113,12 @@ public class Viewer
 	{
 		Color prevColor=g.getColor();
 		g.setColor(Color.BLACK);
-		g.drawRect(viewerY, viewerX, viewerWidth, viewerHeight);
+		g.drawRect(borderWidth, borderHeight, width, height);
 		g.setColor(prevColor);
 	}
 	
 	public void loadWordLists()
 	{
-		normalWordList.add("amoebae");
 		normalWordList.add("philenthropic");
 		normalWordList.add("combustable");
 		normalWordList.add("audacious");
@@ -152,7 +132,7 @@ public class Viewer
 		normalWordList.add("puerile");
 		normalWordList.add("sanctimonious");
 		normalWordList.add("vicissitude");
-		
+		normalWordList.add("amoebae");
 		
 		normalWordList.add("red");
 		normalWordList.add("there");
@@ -164,42 +144,52 @@ public class Viewer
 		normalWordList.add("hare");
 	}
 	
-	private void createVideoPlayer()
+	public void createVideoPlayer()
 	{
-		canvas = new Canvas();
-		System.out.println("ViewerY="+viewerY);
-		System.out.println("ViewerX="+viewerX);
-		canvas.setBounds(viewerX, viewerY, viewerHeight, viewerWidth);
-		//canvas.setBounds(this.rect);
-		mediaPlayer=null;
-				
-		NativeLibrary.addSearchPath("libvlc", "C:/dev/utils/vlc");
+		JPanel panel=null;
+		String path="C:\\dev\\test.mpg";
+		URL url=null;
+		try {
+			url = new File(path).toURI().toURL();
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.out.println("bad file");
+		}
 		
 		
-		MediaPlayerFactory factory = new MediaPlayerFactory ();
-		mediaPlayer = factory.newEmbeddedMediaPlayer ();
-		mediaPlayer.setRepeat ( false );
-		mediaPlayer.setEnableKeyInputHandling ( false );
-		mediaPlayer.setEnableMouseInputHandling ( false );
-	
-		CanvasVideoSurface videoSurface = factory.newVideoSurface ( canvas );
-		mediaPlayer.setVideoSurface ( videoSurface );
-		//mediaPlayer.playMedia ( "/media/path/" );
+		if (this.isVideoInitialized==false)
+		{
+			initiaizeVideo();
+		}
+		
 	}
 	
-	public Canvas getCanvas()
+	public void playVideo()
 	{
-		return this.canvas;
+		//player.stop();
+		//player.playMedia("C:\\dev\\test.mpg");
 	}
-	
-	public EmbeddedMediaPlayer getVideoPlayer()
-	{
-		return this.mediaPlayer;
-	}
-	
-	public void setVideoVisible(boolean isVisible)
-	{
-		this.canvas.setVisible(isVisible);
+
+	private void initiaizeVideo() {
+		this.isVideoInitialized=true;
+		//NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "VLCx86");
+	    //component = new EmbeddedMediaPlayerComponent();
+	    //player = component.getMediaPlayer();
+	    
+	    JPanel videoPanel=new JPanel();
+	    Dimension dim=new Dimension();
+	    dim.setSize(rect.width, rect.height);
+	    videoPanel.setPreferredSize(dim);
+	    videoPanel.setLayout(null);
+	    videoPanel.setLocation(borderWidth, borderHeight);
+
+	    Border emptyBorder = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+
+	    videoPanel.setLayout(null);
+	    videoPanel.setBackground(Color.BLACK);
+	    videoPanel.setBorder(emptyBorder);
+	    gameFrame.add(videoPanel);
 	}
 	
 

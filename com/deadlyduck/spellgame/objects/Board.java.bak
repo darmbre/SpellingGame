@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import com.deadlyduck.spellgame.GameKeyController;
 
 public class Board {
@@ -23,7 +26,7 @@ public class Board {
 	private int selectedTileNumber=1;
 	
 	private Viewer viewer=null;
-	private Slide currentSlide=null;
+	public Slide currentSlide=null;
 	private int slidePtr=0;
 	
 	private int totalSlides=36;
@@ -36,8 +39,8 @@ public class Board {
 	int numOfSlideType4=6;
 	int numOfSlideType5=6;
 	int numOfSlideType6=6;
-
 	
+
 	public Board(int width, int height, Graphics2D screen)
 	{
 		boardWidth=width;
@@ -100,11 +103,7 @@ public class Board {
 		dummyTile=null;
 		
 		createSlides();
-		int viewerX=tileHeight+15;
-		int viewerY=tileWidth+15;
-		int viewerHeight=tileHeight*(Tile.numOfTilesHigh-2)-20;
-		int viewerWidth=tileWidth*(Tile.numOfTilesWide-3)-20;
-		viewer=new Viewer(viewerX, viewerY, viewerHeight,viewerWidth);
+		viewer=new Viewer(tileHeight+15, tileWidth+15, tileHeight*(Tile.numOfTilesHigh-2)-20,tileWidth*(Tile.numOfTilesWide-3)-20);//was 2
 
 		// Draw the top horizontal
 		while (x < boardWidth - tileWidth) {
@@ -210,9 +209,17 @@ public class Board {
 		viewer.drawCenteredString(screen, tiles.get(0).getTileWidth(), currentSlide, timeForDifferentWord);
 	}
 	
-	public Viewer getViewer()
+	public boolean isWhammy()
 	{
-		return this.viewer;
+		boolean whammy=false;
+		if (this.currentSlide.getSlideType()==2)
+		{
+			whammy = true;
+		}
+		return whammy;
+		
 	}
+	
+
 
 }
