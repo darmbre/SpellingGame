@@ -63,6 +63,16 @@ public class GameKeyController implements KeyEventDispatcher {
         		}
         		
         	}
+        	
+        	// Press 'W' to display a new word
+        	if (kc==KeyEvent.VK_M)
+        	{
+        		if (this.state==6)
+        		{
+        			state=100;
+        		}
+        		
+        	}        	
 
         }
 

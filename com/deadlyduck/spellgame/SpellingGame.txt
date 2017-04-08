@@ -1,0 +1,113 @@
+package com.deadlyduck.spellgame;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.deadlyduck.spellgame.objects.Board;
+
+public class SpellingGame extends JPanel {
+
+	private int screenWidth = 0;
+	private int screenHeight = 0;
+	
+	private Board gameBoard=null;
+	private int state=0; //0 - init, 1 - Main Loop, 2 - Shutdown, 3 - restart?
+	
+	private static Font font=null;
+
+	public SpellingGame()
+	{
+		// Gets initial size of the screen
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		screenWidth = screen.width;
+		screenHeight = screen.height;
+	}
+
+	public static void main(String[] args) throws InterruptedException {
+		
+		SpellingGame game = new SpellingGame();
+		game.setBackground(Color.BLACK);
+				
+		//Creates the GUI to draw on
+		JFrame frame = new JFrame("Spelling Bee");
+		frame.add(game);
+		frame.setSize(game.screenWidth, game.screenHeight);
+		frame.setVisible(true);
+		frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		font=frame.getFont();
+		// Game Loop
+		while (true) {
+			game.repaint();
+			Thread.sleep(10);
+		}
+	}
+	
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		
+		if (this.state==0)
+		{
+			// Establish and draw the initial board
+			gameBoard=setupTheGame(g2d);
+			state=1;
+		}
+		if (this.state==1)
+		{
+			getInput();
+			adjustBoard(gameBoard, g2d);
+			checkEnd();
+			
+		}
+		if (this.state==2)
+		{
+			
+		}
+		gameBoard.showInfo(g2d);
+
+	}
+
+	private Board setupTheGame(Graphics2D screen) {
+		
+		Board board=new Board(screenWidth, screenHeight, screen);
+		return board;
+		
+	}
+
+	private void checkEnd() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void adjustBoard(Board board, Graphics2D screen) {
+		board.drawBoard(screen);
+		board.shuffle();
+		
+	}
+
+	private void getInput() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static Font getFrameFont() {
+		return font;
+	}
+
+	
+	
+
+
+}

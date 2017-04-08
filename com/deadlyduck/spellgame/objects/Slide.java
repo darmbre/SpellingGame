@@ -35,22 +35,43 @@ public class Slide {
 		else if (color==Color.CYAN)
 		{
 			slideType=3;
-			theText="STRAIGHT SPELL";
+			//theText="STRAIGHT SPELL";
+			theText="PLAIN-O";
 		}
 		else if (color==Color.GREEN)
 		{
 			slideType=4;
-			theText="SPEED SPELL";
+			theText="HALF TIME";
 		}
 		else if (color==Color.PINK) 
 		{
 			slideType=5;
-			theText="NO VOWELS";
+			theText="VOWEL-LESS";
 		}
 		else if (color==Color.ORANGE) 
 		{
 			slideType=6;
 			theText="BACKWARDS";
+		}
+		else if (color==Color.DARK_GRAY) 
+		{
+			slideType=7;
+			theText="COMEBACK";
+		}
+		else if (color==Color.LIGHT_GRAY) 
+		{
+			slideType=8;
+			theText="LOUD MUSIC";
+		}
+		else if (color==Color.MAGENTA) 
+		{
+			slideType=9;
+			theText="BLOWER";
+		}
+		else if (color==Color.GRAY) 
+		{
+			slideType=10;
+			theText="TRIVIA";
 		}
 		else theText="DEFAULT";
 		

@@ -65,53 +65,79 @@ public class Viewer
 		//loadWordLists();
 	}
 	
-	public void drawCenteredString(Graphics g, int width, Slide currentSlide, boolean timeForDifferentWord) {
+	public void drawCenteredString(Graphics g, int width, Slide currentSlide, boolean timeForDifferentWord, String customWord) {
 
-		String text=chooseWord(currentSlide,timeForDifferentWord);
+		ArrayList words=chooseWord(currentSlide,timeForDifferentWord, customWord);
+		String text=null;
 		Font font=new Font("Arial Black", Font.BOLD, 60);
 		Font prevFont=g.getFont();
 		g.setFont(font);		
-		
+		Color prevColor=g.getColor();
 	    FontMetrics metrics = g.getFontMetrics(font);
-	    int x = (rect.width - metrics.stringWidth(text)) / 2;
+	    int yoffset=0;
 	    
-	    //Account for corner slides width??
-	    x+=viewerY+width;
-	    
-	    // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
-	    int y = ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-	    // Set the font
-	    
-	    Color prevColor=g.getColor();
-	    g.setColor(Color.WHITE);
-	    	    
-	    // Draw the String
-	    g.drawString(text, x, y);
+	    for (int i=0;i<words.size();i++)
+	    {
+	    	text=(String) words.get(i);
+		    int x = (rect.width - metrics.stringWidth(text)) / 2;
+		    
+		    //Account for corner slides width??
+		    x+=viewerY+width;
+		    
+		    // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+		    int y = ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent() + yoffset;
+		    // Set the font
+		    
+		    g.setColor(Color.WHITE);
+		    	    
+		    // Draw the String
+		    g.drawString(text, x, y);
+		    yoffset+=(metrics.getHeight()*2);
+	    }
 	    g.setColor(prevColor);
 	    
 	    g.setFont(prevFont);
 	}
 	
-	private String chooseWord(Slide slide,boolean isTimeForDifferentWord) {
+	private ArrayList chooseWord(Slide slide,boolean isTimeForDifferentWord, String customWord) {
 		
 		String theWord=null;
+		SpellingGame.TIME_LIMIT=SpellingGame.SLOW_TIME;
+		ArrayList retVal=new ArrayList(1);
 		
-		if (isTimeForDifferentWord) normalWordListIndex++;
-		theWord=normalWordList.get(normalWordListIndex);
+		if (customWord!=null)
+		{
+			theWord=customWord;
+		}
+		else
+		{
+			if (isTimeForDifferentWord && customWord==null) 
+				normalWordListIndex++;
+			theWord=normalWordList.get(normalWordListIndex);
+		}
+		
+		if (slide.getSlideType()==4)
+		{
+			SpellingGame.TIME_LIMIT=SpellingGame.FAST_TIME;
+		} else
 		if (slide.getSlideType()==5)
 		{
 			//theWord=theWord.replaceAll("[aeiouyAEIOUY](?!\\b)", "");
 			String disemvoweledWord=theWord.replaceAll("[aeiouyAEIOUY]", "");
-			theWord=theWord+"("+disemvoweledWord+")";
+			retVal.add(theWord);
+			theWord="("+disemvoweledWord+")";
 		}
 		else if (slide.getSlideType()==6)
 		{
+			retVal.add(theWord);
+			
 			StringBuilder sb=new StringBuilder(theWord);
 			sb=sb.reverse();
 			theWord=sb.toString();
 		}
+		retVal.add(theWord);
 		
-		return theWord;
+		return retVal;
 	}
 
 	private ArrayList createVowelWords(StringBuffer sb) {
@@ -173,7 +199,7 @@ public class Viewer
 		//canvas.setBounds(this.rect);
 		mediaPlayer=null;
 				
-		NativeLibrary.addSearchPath("libvlc", "C:/dev/utils/vlc");
+		NativeLibrary.addSearchPath("libvlc", "C:/dev/apps/vlc");
 		
 		
 		MediaPlayerFactory factory = new MediaPlayerFactory ();

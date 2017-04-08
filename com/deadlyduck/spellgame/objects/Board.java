@@ -30,12 +30,16 @@ public class Board {
 	private int totalTiles=18;
 	
 	//Weights of Slides (needs to add up to 36)
-	int numOfSlideType1=6;
-	int numOfSlideType2=6;
-	int numOfSlideType3=6;
-	int numOfSlideType4=6;
-	int numOfSlideType5=6;
-	int numOfSlideType6=6;
+	int numOfSlideType1=4;
+	int numOfSlideType2=4;
+	int numOfSlideType3=4;
+	int numOfSlideType4=4;
+	int numOfSlideType5=4;
+	int numOfSlideType6=4;
+	int numOfSlideType7=3;
+	int numOfSlideType8=3;
+	int numOfSlideType9=3;
+	int numOfSlideType10=3;
 
 	
 	public Board(int width, int height, Graphics2D screen)
@@ -83,6 +87,30 @@ public class Board {
 			Slide s=new Slide(Color.ORANGE);
 			slides.add(s);
 		}
+		
+		for (int i=0;i<numOfSlideType7;i++)
+		{
+			Slide s=new Slide(Color.DARK_GRAY);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType8;i++)
+		{
+			Slide s=new Slide(Color.LIGHT_GRAY);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType9;i++)
+		{
+			Slide s=new Slide(Color.MAGENTA);
+			slides.add(s);
+		}
+		
+		for (int i=0;i<numOfSlideType10;i++)
+		{
+			Slide s=new Slide(Color.GRAY);
+			slides.add(s);
+		}			
 	}
 	
 	private void createBoardLayout(Graphics2D screen) {
@@ -205,9 +233,9 @@ public class Board {
 		tile.drawGameTile(screen,true);
 	}
 	
-	public void showSpellingWord(Graphics2D screen, boolean timeForDifferentWord)
+	public void showSpellingWord(Graphics2D screen, boolean timeForDifferentWord, String word)
 	{
-		viewer.drawCenteredString(screen, tiles.get(0).getTileWidth(), currentSlide, timeForDifferentWord);
+		viewer.drawCenteredString(screen, tiles.get(0).getTileWidth(), currentSlide, timeForDifferentWord, word);
 	}
 	
 	public boolean isWhammy()

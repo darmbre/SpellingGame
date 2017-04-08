@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -36,12 +37,21 @@ public class SpellingGame extends JPanel {
 	private Font font=null;
 	private boolean isNewTurn=true;
 	
+	private long startTime=0;
+	private long currentTime=0;
+	private long endTime=60;
+	
 	private InputStreamReader fileInputStream=new InputStreamReader(System.in);
     private BufferedReader keyboard=new BufferedReader(fileInputStream);	
     
 	public GameKeyController gkc=null;
 	private Player player=null;
     //public static boolean timeForDifferentWord=false;
+	
+	
+	public static long SLOW_TIME=30000;
+	public static long FAST_TIME=15000;
+	public static long TIME_LIMIT=SLOW_TIME;
 
 
 	public SpellingGame()
@@ -120,20 +130,15 @@ public class SpellingGame extends JPanel {
 			
 			gameBoard.drawBoard(g2d);
 			gameBoard.setSelectedSquare(g2d, false);
-//			gameBoard.getViewer().getVideoPlayer().playMedia("C:\\dev\\test.mpg");
-//			try {
-//				Thread.currentThread().sleep(15000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+
 			
 		} else
 		
 		// Display a new word
 		if (this.state==5)
 		{
-			gameBoard.showSpellingWord(g2d, true);
+			startTime=new Date().getTime();
+			gameBoard.showSpellingWord(g2d, true, null);
 			this.state=6;
 			gkc.setState(6);
 			gameBoard.drawBoard(g2d);
@@ -142,16 +147,43 @@ public class SpellingGame extends JPanel {
 			
 		if (this.state==6)
 		{
-			gameBoard.showSpellingWord(g2d, false);
+			currentTime=new Date().getTime();
+			endTime=startTime+TIME_LIMIT;
+			gameBoard.showSpellingWord(g2d, false, null);
 			gameBoard.drawBoard(g2d);
 			gameBoard.setSelectedSquare(g2d, false);
+			if (currentTime>=endTime)
+			{
+				player.playWhammyClip();
+				//Stop the board and wait for a spin
+				gameBoard.showSpellingWord(g2d, false, "Time's Up!!!");
+				this.state=4;
+				gkc.setState(4);
+			}
 		} else
-		
-		// End the game
-		if (this.state==7)
+
+		if (this.state==8)
 		{
 			state=0;
+		} else
+		// End the game
+		if (this.state==100)
+		{
+			gameBoard.getViewer().getCanvas().setVisible(true);
+			gameBoard.getViewer().getVideoPlayer().playMedia("C:\\dev\\test.mpg");
+			try {
+				Thread.currentThread().sleep(30000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.state=4;
+			gkc.setState(4);
+			gameBoard.getViewer().getCanvas().setVisible(false);
 		}
+			
+			
+
 		gameBoard.showInfo(g2d);
 		
 		
