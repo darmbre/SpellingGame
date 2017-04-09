@@ -12,9 +12,14 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -49,15 +54,35 @@ public class SpellingGame extends JPanel {
     //public static boolean timeForDifferentWord=false;
 	
 	
-	public static long SLOW_TIME=30000;
-	public static long FAST_TIME=15000;
+	public static long SLOW_TIME=0;
+	public static long FAST_TIME=0;
 	public static long TIME_LIMIT=SLOW_TIME;
+	public static String VLC_LIB=null;
+	public static String VLC_ROOT=null;
+	
+	public static final String BASE_DIR="C:\\dev\\";
 
 
 	public SpellingGame()
 	{
+		File file= new File(BASE_DIR+"game.properties");
+		Properties properties=null;
+		try {
+			FileInputStream fileInput = new FileInputStream(file);
+			properties = new Properties();
+			properties.load(fileInput);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		VLC_LIB=(String)properties.get("VLC_LIB");
+		VLC_ROOT=(String)properties.get("VLC_ROOT");
+		SLOW_TIME=Long.parseLong((String)properties.get("SLOW_TIME"));
+		FAST_TIME=Long.parseLong((String)properties.get("FAST_TIME"));
+
 		// Gets initial size of the screen
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize(); 
 		screenWidth = screen.width;
 		screenHeight = screen.height-100;
 		player=new Player();
@@ -170,23 +195,18 @@ public class SpellingGame extends JPanel {
 		if (this.state==100)
 		{
 			gameBoard.getViewer().getCanvas().setVisible(true);
-			gameBoard.getViewer().getVideoPlayer().playMedia("C:\\dev\\test.mpg");
+			gameBoard.getViewer().getVideoPlayer().playMedia(BASE_DIR+"test.mpg");
 			try {
 				Thread.currentThread().sleep(30000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 			this.state=4;
 			gkc.setState(4);
 			gameBoard.getViewer().getCanvas().setVisible(false);
 		}
-			
-			
-
 		gameBoard.showInfo(g2d);
-		
-		
 
 	}
 

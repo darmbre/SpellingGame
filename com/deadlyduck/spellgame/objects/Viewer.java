@@ -133,9 +133,10 @@ public class Viewer
 			
 			StringBuilder sb=new StringBuilder(theWord);
 			sb=sb.reverse();
-			theWord=sb.toString();
+			theWord="("+sb.toString()+")";
 		}
 		retVal.add(theWord);
+		
 		
 		return retVal;
 	}
@@ -162,33 +163,6 @@ public class Viewer
 		g.setColor(prevColor);
 	}
 	
-	public void loadWordLists()
-	{
-		normalWordList.add("amoebae");
-		normalWordList.add("philenthropic");
-		normalWordList.add("combustable");
-		normalWordList.add("audacious");
-		normalWordList.add("infatuation");
-		normalWordList.add("forestry");
-		normalWordList.add("tradition");
-		
-		normalWordList.add("antediluvian");
-		normalWordList.add("apocryphal");
-		normalWordList.add("camaraderie");
-		normalWordList.add("puerile");
-		normalWordList.add("sanctimonious");
-		normalWordList.add("vicissitude");
-		
-		
-		normalWordList.add("red");
-		normalWordList.add("there");
-		normalWordList.add("to");
-		normalWordList.add("aisle");
-		normalWordList.add("aisle");
-		normalWordList.add("banned");
-		normalWordList.add("haul");
-		normalWordList.add("hare");
-	}
 	
 	private void createVideoPlayer()
 	{
@@ -199,7 +173,9 @@ public class Viewer
 		//canvas.setBounds(this.rect);
 		mediaPlayer=null;
 				
-		NativeLibrary.addSearchPath("libvlc", "C:/dev/apps/vlc");
+		//NativeLibrary.addSearchPath("libvlc", "C:\\dev\\utils\\vlc");
+		NativeLibrary.addSearchPath("libvlc",SpellingGame.VLC_ROOT);
+		NativeLibrary.addSearchPath("libvlc",SpellingGame.VLC_ROOT+SpellingGame.VLC_LIB);
 		
 		
 		MediaPlayerFactory factory = new MediaPlayerFactory ();

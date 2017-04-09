@@ -6,26 +6,26 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import com.deadlyduck.spellgame.SpellingGame;
+
 public class Player {
 	
 	Clip spinClip=null;
 	Clip selectClip=null;
 	Clip whammy=null;
 	
-	String fileDir="C:\\dev\\";
-	
 	
 	public Player() {
 	    try {
-	        AudioInputStream ais1 = AudioSystem.getAudioInputStream(new File(fileDir+"spin.wav").getAbsoluteFile());
+	        AudioInputStream ais1 = AudioSystem.getAudioInputStream(new File(SpellingGame.BASE_DIR+"spin.wav").getAbsoluteFile());
 	        spinClip = AudioSystem.getClip();
 	        spinClip.open(ais1);
 	        
-	        AudioInputStream ais2 = AudioSystem.getAudioInputStream(new File(fileDir+"select.wav").getAbsoluteFile());
+	        AudioInputStream ais2 = AudioSystem.getAudioInputStream(new File(SpellingGame.BASE_DIR+"select.wav").getAbsoluteFile());
 	        selectClip = AudioSystem.getClip();
 	        selectClip.open(ais2);
 	        
-	        AudioInputStream ais3 = AudioSystem.getAudioInputStream(new File(fileDir+"whammy.wav").getAbsoluteFile());
+	        AudioInputStream ais3 = AudioSystem.getAudioInputStream(new File(SpellingGame.BASE_DIR+"whammy.wav").getAbsoluteFile());
 	        whammy = AudioSystem.getClip();
 	        whammy.open(ais3);
 	        
