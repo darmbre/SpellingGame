@@ -3,10 +3,13 @@ package com.deadlyduck.spellgame;
 import java.awt.EventQueue;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
+import java.util.Date;
+import java.util.Random;
 
 public class GameKeyController implements KeyEventDispatcher {
 
     private static int state=0;
+    
     /*
      * 0 = init
      * 
@@ -19,6 +22,7 @@ public class GameKeyController implements KeyEventDispatcher {
     	
 
         assert EventQueue.isDispatchThread();
+        Random r=new Random(new Date().getTime());
 
         int kc = e.getKeyCode();
 
@@ -28,26 +32,31 @@ public class GameKeyController implements KeyEventDispatcher {
         	if (kc==KeyEvent.VK_F1)
         	{
         		// Start a new game and get the board spinning
-        		if (state<2)
-        		state=2;
+        		if (state<=10)
+        		{
+        			state=20;
+        		} else if (state==20)
+        		{
+        			state=40;
+        		}
         		
         	}
         	
         	if (kc==KeyEvent.VK_SPACE)
         	{
         		// In the process of a game (not demo mode)
-        		if (state>2)
+        		if (state>20)
         		{
         			//If Spinning - stop the board
-        			if (state==3)
+        			if (state==30)
         			{
-        				state=4;
+        				state=40;
         				
         			}
         			//If Stopped - spin the board
-        			else if (state==4 || state==6)
+        			else if (state==40 || state==60)
         			{
-        				state=3;
+        				state=30;
         			}        			
         		}
 
@@ -57,9 +66,9 @@ public class GameKeyController implements KeyEventDispatcher {
         	// Press 'W' to display a new word
         	if (kc==KeyEvent.VK_W)
         	{
-        		if (this.state==4)
+        		if (this.state==40)
         		{
-        			state=5;
+        			state=50;
         		}
         		
         	}
@@ -67,9 +76,15 @@ public class GameKeyController implements KeyEventDispatcher {
         	// Press 'W' to display a new word
         	if (kc==KeyEvent.VK_M)
         	{
-        		if (this.state==6)
+        		if (this.state==60)
         		{
-        			state=100;
+        			
+        			//Randomize between all choices
+        			int videoNum=r.nextInt(3)+100;
+        			state=videoNum;
+        			System.out.println("random="+videoNum);
+        			r=null;
+
         		}
         		
         	}        	

@@ -24,10 +24,10 @@ public class Tile
 	private int y=0;
 	private Slide slide=null;	
 	
-	Font tileFont=new Font("Arial Black", Font.BOLD, 12);
+	Font tileFont=null; //new Font("Arial Black", Font.BOLD, 12);
 
 	
-	public Tile (Board board, int x, int y, Slide s)
+	public Tile (Board board, int x, int y, Slide s, String fontName, int fontSize)
 	{
 		tileWidth = Board.getBoardWidth() / numOfTilesWide; // Number of tiles accross
 		tileHeight = Board.getBoardHeight() / numOfTilesHigh; // tiles up and down
@@ -36,6 +36,8 @@ public class Tile
 		this.slide=s;
 		this.x=x;
 		this.y=y;
+		System.out.println("Font_NAME="+fontName);
+		tileFont=new Font(fontName,Font.BOLD,fontSize);
 	}
 	
 	public void drawGameTile(Graphics2D screen, int x, int y) {

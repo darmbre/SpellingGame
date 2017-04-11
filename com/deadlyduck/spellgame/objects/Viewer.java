@@ -5,13 +5,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Properties;
+
+import javax.imageio.ImageIO;
 
 import com.deadlyduck.spellgame.SpellingGame;
 import com.sun.jna.NativeLibrary;
@@ -29,6 +34,7 @@ public class Viewer
 	private Rectangle rect=null;
 	private EmbeddedMediaPlayer mediaPlayer=null;
 	private Canvas canvas=null;
+	private HashMap<String,Image> imagesMap = new HashMap<String,Image>(5);
 	
     public ArrayList<String> normalWordList=new ArrayList<String>();
     
@@ -37,10 +43,10 @@ public class Viewer
     private static String vowels="aeiouyAEIOUY";
 
 	
-	public Viewer(int viewerY, int viewerX, int viewerWidth, int viewerHeight)
+	public Viewer(int viewerY, int viewerX, int viewerHeight, int viewerWidth)
 	{
 		//Get the word list
-		File file= new File("C:\\dev\\words.properties");
+		File file= new File(SpellingGame.BASE_DIR+"words.properties");
 		Properties properties=null;
 		try {
 			FileInputStream fileInput = new FileInputStream(file);
@@ -60,7 +66,9 @@ public class Viewer
 		this.viewerY=viewerY;
 		this.viewerWidth=viewerWidth;
 		this.viewerHeight=viewerHeight;
-		this.rect=new Rectangle(viewerWidth,viewerHeight);
+		this.rect=new Rectangle(viewerHeight,viewerWidth);
+		loadImage("SpellingBee.jpg");
+		loadImage("whammy1.jpg");
 		createVideoPlayer();
 		//loadWordLists();
 	}
@@ -169,7 +177,7 @@ public class Viewer
 		canvas = new Canvas();
 		System.out.println("ViewerY="+viewerY);
 		System.out.println("ViewerX="+viewerX);
-		canvas.setBounds(viewerX, viewerY, viewerHeight, viewerWidth);
+		canvas.setBounds(viewerX, viewerY, viewerWidth, viewerHeight);
 		//canvas.setBounds(this.rect);
 		mediaPlayer=null;
 				
@@ -203,6 +211,66 @@ public class Viewer
 	{
 		this.canvas.setVisible(isVisible);
 	}
+	
+	public void drawTitlePicture(Graphics g,String picName)
+	{
+		//g.drawRect(viewerY, viewerX, viewerWidth, viewerHeight);
+		
+		Image img=imagesMap.get(picName);
+		//g.drawRect(viewerX, viewerY, viewerWidth, viewerHeight);
+		
+		g.drawImage(img,
+                viewerX,
+                viewerY,
+                ((int)(viewerWidth*1.35)),
+                ((int)(viewerHeight*1.35)),
+                0,
+                0,
+                452,
+                323,
+                null);
+		
+	}
+	
+	public void drawWammyPicture(Graphics g,String picName)
+	{
+		//g.drawRect(viewerY, viewerX, viewerWidth, viewerHeight);
+		
+		Image img=imagesMap.get(picName);
+		//g.drawRect(viewerX, viewerY, viewerWidth, viewerHeight);
+		
+		g.drawImage(img,
+                viewerX,
+                viewerY,
+                ((int)(viewerWidth*2.3)),
+                ((int)(viewerHeight*1.5)),
+                0,
+                0,
+                452,
+                323,
+                null);
+		
+	}	
+	
+	private void loadImages(String fileName)
+	{
+		File imageSrc=new File(SpellingGame.BASE_DIR+fileName);
+		BufferedImage img=null;
+		try {
+			img = ImageIO.read(imageSrc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		imagesMap.put(fileName, img);
+	}
+	
+	public void loadImage(String fileName)
+	{
+		loadImages(fileName);
+	}
+	
 	
 
 }

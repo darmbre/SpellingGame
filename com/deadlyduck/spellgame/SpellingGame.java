@@ -59,6 +59,8 @@ public class SpellingGame extends JPanel {
 	public static long TIME_LIMIT=SLOW_TIME;
 	public static String VLC_LIB=null;
 	public static String VLC_ROOT=null;
+	public static String FONT_NAME=null;
+	public static int FONT_SIZE=0;
 	
 	public static final String BASE_DIR="C:\\dev\\";
 
@@ -80,11 +82,13 @@ public class SpellingGame extends JPanel {
 		VLC_ROOT=(String)properties.get("VLC_ROOT");
 		SLOW_TIME=Long.parseLong((String)properties.get("SLOW_TIME"));
 		FAST_TIME=Long.parseLong((String)properties.get("FAST_TIME"));
+		FONT_NAME=(String)properties.get("TILE_FONT_NAME");
+		FONT_SIZE=Integer.parseInt((String)properties.get("TILE_FONT_SIZE"));
 
 		// Gets initial size of the screen
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize(); 
 		screenWidth = screen.width;
-		screenHeight = screen.height-100;
+		screenHeight = screen.height-25; //100
 		player=new Player();
 		this.setLayout(null);
 	}
@@ -106,26 +110,43 @@ public class SpellingGame extends JPanel {
 			this.add(videoCanvas);
 			////////////////////////////////////////////////////////////
 			videoCanvas.setVisible(false);
-			state=1;
-			gkc.setState(1);
+			state=10;
+			gkc.setState(10);
 		}
 		
 		//Demo Mode
-		if (this.state==1)
+		if (this.state==10)
 		{
-			adjustBoard(gameBoard, g2d);
+			gameBoard.drawBoard(g2d);
+			boolean isVideoDone=false;
+			if (!isVidPlaying())
+			{
+				
+				adjustBoard(gameBoard, g2d);
+				gameBoard.getViewer().getCanvas().setVisible(true);
+				gameBoard.getViewer().getVideoPlayer().playMedia(BASE_DIR+"trivia.mp4");
+			}
+			else
+			{
+				adjustBoard(gameBoard, g2d);
+			}
+			
 		} else
 		
 		// Start actual Game (add sound, wait for a spin)
-		if (this.state==2)
+		if (this.state==20)
 		{
 			//Stop the board and wait for a spin
-			this.state=4;
-			gkc.setState(4);
+			
+			gameBoard.getViewer().getVideoPlayer().stop();
+			gameBoard.getViewer().getCanvas().setVisible(false);
+			gameBoard.drawBoard(g2d);
+			gameBoard.setSelectedSquare(g2d, false);
+			gameBoard.getViewer().drawTitlePicture(g2d, "SpellingBee.jpg");
 		} else
 		
 		// Spinning Board
-		if (this.state==3)
+		if (this.state==30)
 		{
 			isNewTurn=true;
 			player.startSpinClip();
@@ -135,8 +156,10 @@ public class SpellingGame extends JPanel {
 		} else
 		
 		// Stop board
-		if (this.state==4)
+		if (this.state==40)
 		{
+			
+			gameBoard.getViewer().getVideoPlayer().stop();
 			player.stopSpinClip();
 			
 			if (isNewTurn)
@@ -144,6 +167,7 @@ public class SpellingGame extends JPanel {
 				if (gameBoard.isWhammy())
 				{
 					player.playWhammyClip();
+					gameBoard.getViewer().drawWammyPicture(g2d, "whammy1.jpg");
 				}
 				else
 				{
@@ -151,7 +175,11 @@ public class SpellingGame extends JPanel {
 				}
 				
 				isNewTurn=false;
-			}			
+			}	
+			else if (gameBoard.isWhammy())
+			{
+				gameBoard.getViewer().drawWammyPicture(g2d, "whammy1.jpg");
+			}
 			
 			gameBoard.drawBoard(g2d);
 			gameBoard.setSelectedSquare(g2d, false);
@@ -160,17 +188,17 @@ public class SpellingGame extends JPanel {
 		} else
 		
 		// Display a new word
-		if (this.state==5)
+		if (this.state==50)
 		{
 			startTime=new Date().getTime();
 			gameBoard.showSpellingWord(g2d, true, null);
-			this.state=6;
-			gkc.setState(6);
+			this.state=60;
+			gkc.setState(60);
 			gameBoard.drawBoard(g2d);
 			gameBoard.setSelectedSquare(g2d, false);
 		} else
 			
-		if (this.state==6)
+		if (this.state==60)
 		{
 			currentTime=new Date().getTime();
 			endTime=startTime+TIME_LIMIT;
@@ -182,12 +210,12 @@ public class SpellingGame extends JPanel {
 				player.playWhammyClip();
 				//Stop the board and wait for a spin
 				gameBoard.showSpellingWord(g2d, false, "Time's Up!!!");
-				this.state=4;
-				gkc.setState(4);
+				this.state=40;
+				gkc.setState(40);
 			}
 		} else
 
-		if (this.state==8)
+		if (this.state==80)
 		{
 			state=0;
 		} else
@@ -202,8 +230,37 @@ public class SpellingGame extends JPanel {
 				
 				e.printStackTrace();
 			}
-			this.state=4;
-			gkc.setState(4);
+			this.state=40;
+			gkc.setState(40);
+			gameBoard.getViewer().getCanvas().setVisible(false);
+		} 
+		// End the game
+		else if (this.state==101)
+		{
+			gameBoard.getViewer().getCanvas().setVisible(true);
+			gameBoard.getViewer().getVideoPlayer().playMedia(BASE_DIR+"loser.mpg");
+			try {
+				Thread.currentThread().sleep(4000);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
+			this.state=40;
+			gkc.setState(40);
+			gameBoard.getViewer().getCanvas().setVisible(false);
+		}
+		else if (this.state==102)
+		{
+			gameBoard.getViewer().getCanvas().setVisible(true);
+			gameBoard.getViewer().getVideoPlayer().playMedia(BASE_DIR+"no.mpg");
+			try {
+				Thread.currentThread().sleep(10000);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
+			this.state=40;
+			gkc.setState(40);
 			gameBoard.getViewer().getCanvas().setVisible(false);
 		}
 		gameBoard.showInfo(g2d);
@@ -262,6 +319,11 @@ public class SpellingGame extends JPanel {
 			game.repaint();
 			Thread.sleep(500);
 		}
+	}
+	
+	private boolean isVidPlaying()
+	{
+		return gameBoard.getViewer().getVideoPlayer().isPlaying();
 	}
 	
 

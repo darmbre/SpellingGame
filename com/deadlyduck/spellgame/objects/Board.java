@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import com.deadlyduck.spellgame.GameKeyController;
+import com.deadlyduck.spellgame.SpellingGame;
 
 public class Board {
 	
@@ -122,7 +123,7 @@ public class Board {
 		slides=new ArrayList<Slide>(totalSlides);
 		
 		// This is a dummy tile to get measurements
-		Tile dummyTile=new Tile(this, x, y, null);
+		Tile dummyTile=new Tile(this, x, y, null,null,0);
 		int tileWidth=dummyTile.getTileWidth();
 		int tileHeight=dummyTile.getTileHeight();
 		dummyTile=null;
@@ -131,7 +132,7 @@ public class Board {
 		int viewerX=tileHeight+15;
 		int viewerY=tileWidth+15;
 		int viewerHeight=tileHeight*(Tile.numOfTilesHigh-2)-20;
-		int viewerWidth=tileWidth*(Tile.numOfTilesWide-3)-20;
+		int viewerWidth=tileWidth*(Tile.numOfTilesWide-3)-20;//longer screens 3
 		viewer=new Viewer(viewerX, viewerY, viewerHeight,viewerWidth);
 
 		// Draw the top horizontal
@@ -171,7 +172,7 @@ public class Board {
 
 	private void addTileToGame(Graphics2D screen, int x, int y) {
 		Tile tile;
-		tile = new Tile(this,x,y, slides.get(slidePtr++));
+		tile = new Tile(this,x,y, slides.get(slidePtr++),SpellingGame.FONT_NAME,SpellingGame.FONT_SIZE);
 		tile.drawGameTile(screen, false);
 		tiles.add(tile);
 	}
@@ -189,9 +190,9 @@ public class Board {
 
 	public void showInfo(Graphics2D screen)
 	{
-		screen.drawString("Width:" + boardWidth, 30, boardHeight - 130);
-		screen.drawString("Height:" + boardHeight, 30, boardHeight - 145);
-		screen.drawString("State:"+ GameKeyController.getState(), 30, boardHeight - 115);
+		//screen.drawString("Width:" + boardWidth, 30, boardHeight - 130);
+		//screen.drawString("Height:" + boardHeight, 30, boardHeight - 145);
+		//screen.drawString("State:"+ GameKeyController.getState(), 30, boardHeight - 115);
 	}
 	
 	public static int getBoardWidth() {
